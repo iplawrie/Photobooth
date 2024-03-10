@@ -8,7 +8,7 @@ button = Button(17)
 i = 0
 IMG_NAME = "image.jpg"
 
-img = Image.open('pi_layover4.png')
+#img = Image.open('pi_layover4.png')
 
 def take_pic():
     global i
