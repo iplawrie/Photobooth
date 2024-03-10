@@ -12,25 +12,26 @@ IMG_NAME = "image.jpg"
 
 def take_pic():
     global i
-    camera.capture(IMG_NAME)
-    #camera.capture("/home/pi/image%s.jpg" % i)
+    #camera.capture(IMG_NAME)
+    camera.capture("/home/ian/Desktop/Photos/image%s.jpg" % i)
     i += 1
 
 camera = PiCamera()
 camera.start_preview()
-pad = Image.new('RGB', (
-        ((img.size[0] + 31) // 32) * 32,
-        ((img.size[1] + 15) // 16) * 16,
-        ))
+#pad = Image.new('RGB', (
+#        ((img.size[0] + 31) // 32) * 32,
+#        ((img.size[1] + 15) // 16) * 16,
+#        ))
 # Paste the original image into the padded one
-pad.paste(img, (0, 0))
+#pad.paste(img, (0, 0))
 
-o = camera.add_overlay(pad.tostring(), size=img.size)
+#o = camera.add_overlay(pad.tostring(), size=img.size)
 
-o.alpha = 255
-o.layer = 3
-button.wait_for_press()
-for j in reversed(range(3)):
+#o.alpha = 255
+#o.layer = 3
+input("Button Press")
+#button.wait_for_press()
+for j in reversed(range(5)):
     camera.annotate_text = str(j+1)
     camera.annotate_text_size=160
     sleep(1)
@@ -38,7 +39,7 @@ camera.annotate_text = ''
 take_pic()
 camera.stop_preview()
 
-
+"""
 # your twitter app keys goes here
 consumer_key = 'hhhh' # put twitter API Key here
 consumer_secret = 'hhhh' # put twitter API Secret here
@@ -62,3 +63,4 @@ with open(IMG_NAME, 'rb') as photo:
     twitter.update_status_with_media(status=message, media=photo)
 
 print ("Posting tweet with picture...\n")
+"""
