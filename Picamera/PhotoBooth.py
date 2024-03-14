@@ -7,13 +7,13 @@ class PhotoBooth:
     location = None
     imageoverlay = None
 
-    def __init__(self, location):
+    def __init__(self, location = "/home/ian/Desktop/Photos"):
         self.location = location
         self.camera.annotate_text_size = 160
         #self.camera.resolution = (1280, 720)
 
     def close(self):
-        self.camera.stop_preview()
+        self.camera_preview_stop()
         self.camera.close()
 
     def text(self, text):
@@ -24,7 +24,7 @@ class PhotoBooth:
 
     def text_countdown(self, count):
         for i in reversed(range(count)):
-            self.text(count + 1)
+            self.text(i + 1)
             sleep(1)
         self.text("Cheese")
         self.clear_text()
@@ -39,6 +39,9 @@ class PhotoBooth:
 
     def camera_preview(self):
         self.camera.start_preview()
+
+    def camera_preview_stop(self):
+        self.camera.stop_preview()
 
     def image_preview(self, img):
         pad = Image.new('RGB', (
