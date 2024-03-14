@@ -7,8 +7,7 @@ from time import sleep
 #buttonlight = LED()
 
 def main():
-    location = "/home/ian/Desktop/Photos"
-    pb = PhotoBooth(location)
+    pb = PhotoBooth()
     pb.camera_preview()
     input("Button Press")
     pb.text_countdown(5)
