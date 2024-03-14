@@ -1,4 +1,4 @@
-from picamera2 import Picamera2
+from picamera2 import Picamera2, Preview
 from time import sleep, strftime
 
 class PhotoBooth:
@@ -7,9 +7,10 @@ class PhotoBooth:
     location = None
     imageoverlay = None
 
-    def __init__(self, location = "/home/ian/Desktop/Photos"):
+    def __init__(self, location = "/home/ian/Desktop/Photos", size = (800, 600)):
         self.location = location
-        self.camera.configure(self.camera.create_preview_configuration())
+        config = self.camera.create_preview_configuration({"size" : size})
+        self.camera.configure(config)
 
     def close(self):
         self.camera_preview_stop()
@@ -27,10 +28,12 @@ class PhotoBooth:
 
     def take_pic(self):
         imagelocation = self.location + "/image%s_%s" % (self.shotnumber, strftime("%Y%m%d-%H%M%S"))
+        self.camera.capture(imagelocation)
         self.shotnumber += 1
 
     def camera_preview(self):
-        pass
+        self.camera.start_preview(Preview.QTGL)
+        self.camera.start()
 
     def camera_preview_stop(self):
         self.camera.stop_preview()
