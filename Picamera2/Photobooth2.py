@@ -1,5 +1,6 @@
 from picamera2 import Picamera2, Preview
 from time import sleep, strftime
+from PIL import Image
 
 class PhotoBooth:
     camera = Picamera2()
@@ -28,8 +29,10 @@ class PhotoBooth:
 
     def take_pic(self):
         imagelocation = self.location + "/image%s_%s" % (self.shotnumber, strftime("%Y%m%d-%H%M%S"))
+        image = Image.open(imagelocation)
         self.camera.capture(imagelocation)
         self.shotnumber += 1
+        return image
 
     def camera_preview(self):
         self.camera.start_preview(Preview.QTGL)
@@ -38,8 +41,13 @@ class PhotoBooth:
     def camera_preview_stop(self):
         self.camera.stop_preview()
 
-    def image_preview(self):
-        pass
+    def image_preview(self, img):
+        pad = Image.new('RGB', (
+            ((img.size[0] + 31) // 32) * 32,
+            ((img.size[1] + 15) // 16) * 16,
+        ))
+        pad.paste(img, (0, 0))
+        self.camera.set_overlay(pad.tobytes())
 
     def image_remove(self):
         pass
