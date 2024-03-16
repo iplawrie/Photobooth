@@ -1,23 +1,37 @@
 from picamera import PiCamera
-from time import sleep
+from time import sleep, strftime
 from PIL import Image
+import numpy as np
+
 class PhotoBooth:
-    camera = PiCamera()
+    camera = None
     shotnumber = 0
     location = None
     imageoverlay = None
+    background = None
+    previewesolution = None
+    effectnum = 0
+    effects = ['none', 'negative', 'solarize',
+               'sketch', 'denoise', 'emboss',
+               'oilpaint', 'hatch', 'gpen',
+               'pastel', 'watercolor', 'film',
+               'blur', 'saturation', 'colorswap',
+               'washedout', 'posterise', 'colorpoint',
+               'colorbalance', 'cartoon',
+               'deinterlace1', 'deinterlace2']
 
-    def __init__(self, location = "/home/ian/Desktop/Photos"):
+    def __init__(self, location = "/home/ian/Desktop/Photos", previewresolution = (1640, 1282), camresolution = (3280, 2464)):
+        self.camera = PiCamera()
+        self.camera.resolution = camresolution
+        self.previewresolution = previewresolution
         self.location = location
         self.camera.annotate_text_size = 160
-        #self.camera.resolution = (1280, 720)
 
     def close(self):
-        self.camera_preview_stop()
         self.camera.close()
 
     def text(self, text):
-        self.camera.annotate_text = text
+        self.camera.annotate_text = str(text)
 
     def clear_text(self):
         self.camera.annotate_text = ''
@@ -26,21 +40,34 @@ class PhotoBooth:
         for i in reversed(range(count)):
             self.text(i + 1)
             sleep(1)
-        self.text("Cheese")
+        self.text("Cheese!")
+        sleep(1)
         self.clear_text()
 
+    def image_effects(self):
+        self.effectnum += 1
+        if self.effectnum > 21:
+            self.effectnum = 0
+        effect = self.effects[self.effectnum]
+        self.camera.image_effect = effect
+        self.text(effect)
+
     def take_pic(self):
-        imagelocation = self.location + "/image%s.png" % self.shotnumber
-        #location = "/home/ian/Desktop/Photos/image%s.jpg" % self.shotnumber
-        self.camera.capture(imagelocation)
+        imagelocation = self.location + "/image%s_%s.png" % (self.shotnumber, strftime("%Y.%m.%d-%H:%M:%S"))
+        self.camera.capture(imagelocation, use_video_port=False, format='png')
         image = Image.open(imagelocation)
         self.shotnumber += 1
         return image
 
     def camera_preview(self):
-        self.camera.start_preview()
+        self.camera.framerate = 40
+        a = np.zeros((720, 1280, 3), dtype=np.uint8)
+        a[720:1280:] = 0
+        self.camera.start_preview(resolution = self.previewresolution)
+        self.background = self.camera.add_overlay(a.tobytes(),size=(1280, 720), format='rgb')
 
     def camera_preview_stop(self):
+        self.camera.remove_overlay(self.background)
         self.camera.stop_preview()
 
     def image_preview(self, img):
@@ -49,9 +76,7 @@ class PhotoBooth:
             ((img.size[1] + 15) // 16) * 16,
         ))
         pad.paste(img, (0, 0))
-        self.imageoverlay = self.camera.add_overlay(pad.tobytes(), size=img.size)
-        self.imageoverlay.alpha = 255
-        self.imageoverlay.layer = 3
+        self.imageoverlay = self.camera.add_overlay(pad.tobytes(), size=img.size, alpha = 255, layer = 3)
 
     def image_remove(self):
         self.camera.remove_overlay(self.imageoverlay)
