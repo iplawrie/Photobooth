@@ -44,10 +44,17 @@ class PhotoBooth:
         sleep(1)
         self.clear_text()
 
-    def image_effects(self):
-        self.effectnum += 1
-        if self.effectnum > 21:
+    def image_effects(self, forward = True):
+        if forward:
+            self.effectnum += 1
+        else:
+            self.effectnum -= 1
+
+        if self.effectnum < 1:
+            self.effectnum = 21
+        elif self.effectnum > 21:
             self.effectnum = 0
+
         effect = self.effects[self.effectnum]
         self.camera.image_effect = effect
         self.text(effect)
