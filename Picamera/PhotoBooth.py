@@ -30,11 +30,8 @@ class PhotoBooth:
     def close(self):
         self.camera.close()
 
-    def text(self, text):
+    def text(self, text = ''):
         self.camera.annotate_text = str(text)
-
-    def clear_text(self):
-        self.camera.annotate_text = ''
 
     def text_countdown(self, count):
         for i in reversed(range(count)):
