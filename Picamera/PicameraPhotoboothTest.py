@@ -14,15 +14,6 @@ def main():
 
     try:
         pb.camera_preview()
-    #input("Button Press")
-        #button.wait_for_press()
-        #pb.text_countdown(5)
-        #img = pb.take_pic()
-    #pb.image_preview(img)
-    #sleep(3)
-    #pb.image_remove()
-        #pb.text_countdown(5)
-        #sleep(5)
         pause()
     finally:
         pb.close()
