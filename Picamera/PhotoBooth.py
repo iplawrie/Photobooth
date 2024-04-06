@@ -20,6 +20,7 @@ class PhotoBooth:
                'colorbalance', 'cartoon',
                'deinterlace1', 'deinterlace2']
 
+
     def __init__(self, location = "/home/ian/Desktop/Photos", previewresolution = (1640, 1282), camresolution = (3280, 2464)):
         self.camera = PiCamera()
         self.camera.resolution = camresolution
